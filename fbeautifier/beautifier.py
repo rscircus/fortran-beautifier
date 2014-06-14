@@ -5,6 +5,7 @@ __all__ = ['beautify']
 
 import re
 
+
 def beautify_using_fparser(input_string):
   from fparser.readfortran import FortranStringReader
   from fparser.parsefortran import  FortranParser
