@@ -9,6 +9,7 @@ from __future__ import division
 
 import re
 import logging
+import six
 from .splitline import string_replace_map
 from . import pattern_tools as pattern
 from .readfortran import FortranReaderBase
@@ -283,10 +284,6 @@ content : tuple
             end_stmt = content[-1]
             if isinstance(end_stmt, endcls_all) and hasattr(end_stmt, 'get_name') and hasattr(start_stmt, 'get_name'):
                 if end_stmt.get_name() is not None:
-                    print('|'+str(start_stmt.get_name())+'|', '|'+str(end_stmt.get_name())+'|')
-                    print(type(start_stmt.get_name()), type(end_stmt.get_name()))
-                    print(start_stmt.get_name() == end_stmt.get_name())
-                    print(str(start_stmt.get_name()) == str(end_stmt.get_name()))
                     if start_stmt.get_name() != end_stmt.get_name():
                         end_stmt.item.reader.error('expected <%s-name> is %s but got %s. Ignoring.'\
                                                    % (end_stmt.get_type().lower(), start_stmt.get_name(), end_stmt.get_name()))
@@ -609,12 +606,9 @@ string
             return False
         return str(self.string) == str(other.string) 
     def compare(self, other):
-        # return cmp(self.string,other.string) P2 code TODO remove this
-        # return (self.string > other.string) - (self.string < other.string)
-        assert NotImpletenetedError, "This is a change from Py2to3. Not sure where this is used so can't test"
-        return self.string == other.string
-
-
+        if six.PY3:
+            raise NotImpletenetedError("This is a change from Py2to3. This is used by Py2 but not Py3, You should not see this")
+        return cmp(self.string,other.string)
 
 class STRINGBase(StringBase):
     """

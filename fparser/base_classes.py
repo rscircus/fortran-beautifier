@@ -16,6 +16,8 @@ import re
 import sys
 import copy
 import logging
+import six
+
 from .readfortran import Line, Comment
 from numpy.distutils.misc_util import yellow_text, red_text
 from .utils import split_comma, specs_split_comma, is_int_literal_constant, \
@@ -104,7 +106,7 @@ def get_base_classes(cls):
         bases += get_base_classes(c)
     return bases + cls.__bases__ + (cls,)
 
-class Variable(object, metaclass=classes):
+class Variable(six.with_metaclass(classes, object)):
     """
     Variable instance has attributes:
       name
@@ -432,11 +434,10 @@ class Variable(object, metaclass=classes):
     def info(self, message):
         return self.parent.info(message)
 
-class ProgramBlock(object, metaclass=classes):
-
+class ProgramBlock(six.with_metaclass(classes, object)):
     pass
 
-class Statement(object, metaclass=classes):
+class Statement(six.with_metaclass(classes, object)):
     """
     Statement instance has attributes:
       parent  - Parent BeginStatement or FortranParser instance

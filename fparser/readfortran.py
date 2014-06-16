@@ -65,6 +65,8 @@ To read a Fortran code from a string, use `FortranStringReader` class::
 #Author: Pearu Peterson <pearu@cens.ioc.ee>
 #Created: May 2006
 
+from __future__ import print_function
+
 __all__ = ['FortranFileReader',
            'FortranStringReader',
            'FortranReaderError',
@@ -79,7 +81,7 @@ import sys
 import tempfile
 import traceback
 import logging
-from io import StringIO
+from six import StringIO
 from numpy.distutils.misc_util import yellow_text, red_text, blue_text
 
 from .sourceinfo import get_source_info, get_source_info_str

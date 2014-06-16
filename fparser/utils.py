@@ -22,6 +22,8 @@ import os, glob
 import sys
 import traceback
 
+import six
+
 class ParseError(Exception):
     pass
 
@@ -230,7 +232,8 @@ class meta_classes(type):
             raise AttributeError('instance does not have attribute %r' % (name))
         return cls
 
-class classes(type, metaclass=meta_classes):
+
+class classes(six.with_metaclass(meta_classes, type)):
     """Make classes available as attributes of this class.
 
     To add a class to the attributes list, one must use::

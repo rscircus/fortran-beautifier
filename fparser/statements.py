@@ -11,6 +11,8 @@ Created: May 2006
 -----
 """
 
+from __future__ import print_function
+
 __all__ = ['GeneralAssignment',
            'Assignment','PointerAssignment','Assign','Call','Goto','ComputedGoto','AssignedGoto',
            'Continue','Return','Stop','Print','Read','Read0','Read1','Write','Flush','Wait',
