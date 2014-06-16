@@ -19,7 +19,6 @@ def test_dimension_attr():
     real, dimension(-20:20, 100:113, -  512  : 713) :: b
     end
     '''
-
     tree = api.parse(source_str, isfree=True, isstrict=False)
     subr = tree.a.external_subprogram['foo']
     avar = subr.a.variables['a']
@@ -29,6 +28,10 @@ def test_dimension_attr():
     assert avar.shape == ['4', '1']
 
     bvar = subr.a.variables['b']
+
+    print(bvar.dimension)
+    print(bvar.shape)
+    print(bvar)
 
     assert bvar.dimension == [('-20', '20'), ('100', '113'), ('-  512', '713')]
     assert bvar.shape == ['40', '13', '1225']
@@ -89,13 +92,16 @@ def test_provides():
 
       '''
 
+    # PY2to3: here keys from a dictionary is tested. These are not guaranteed to be in a consistent order
+    # Therefore these are now sorted before comparison
+
     tree = api.parse(source_str, isfree=True, isstrict=False)
     mod5 = tree.a.module['mod5']
     mod6 = tree.a.module['mod6']
-    assert mod5.a.module_provides.keys() == ['fp', 'dummy']
-    assert mod5.a.use_provides.keys() == ['a', 'b', 'e', 'a2', 'b2', 'lgp']
-    assert mod6.a.module_provides.keys() ==  []
-    assert mod6.a.use_provides.keys() ==  ['fp', 'dummy', 'b', 'e', 'qgp', 'a2', 'a', 'b2']
+    assert sorted(list(mod5.a.module_provides.keys())) == sorted(['fp', 'dummy'])
+    assert sorted(list(mod5.a.use_provides.keys())) == sorted(['a', 'b', 'e', 'a2', 'b2', 'lgp'])
+    assert sorted(list(mod6.a.module_provides.keys())) == sorted([])
+    assert sorted(list(mod6.a.use_provides.keys())) == sorted(['fp', 'dummy', 'b', 'e', 'qgp', 'a2', 'a', 'b2'])
     assert mod6.a.use_provides['qgp'].name == 'gp'
 
 def test_walk():
@@ -111,4 +117,4 @@ def test_walk():
     '''
     tree = api.parse(source_str, isfree=True, isstrict=False, ignore_comments=False)
     for stmt, depth in api.walk(tree, 1):
-        print depth, stmt.item
+        print(depth, stmt.item)

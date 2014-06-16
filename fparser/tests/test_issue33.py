@@ -23,4 +23,4 @@ end module foo
     END INTERFACE assignment(=)
 
   END MODULE foo
-    '''.strip().split('\n')[1:],`r`
+    '''.strip().split('\n')[1:],repr(r)

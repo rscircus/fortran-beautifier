@@ -41,4 +41,4 @@ END MODULE testa
     END SUBROUTINE f
 
   END MODULE testa
-    '''.strip().split('\n')[1:],`r`
+    '''.strip().split('\n')[1:],repr(r)

@@ -34,6 +34,8 @@ is_entity_decl = re.compile(r'^[a-z_]\w*',re.I).match
 is_int_literal_constant = re.compile(r'^\d+(_\w+|)$').match
 module_file_extensions = ['.f', '.f90', '.f95', '.f03', '.f08']
 
+string_to_signed_int = lambda string : int("".join(string.strip().split()))
+
 def split_comma(line, item = None, comma=',', keep_empty=False):
     items = []
     if item is None:
@@ -83,7 +85,7 @@ def parse_bind(line, item = None):
         newitem = None
     newline = newline[4:].lstrip()
     i = newline.find(')')
-    assert i!=-1,`newline`
+    assert i!=-1,repr(newline)
     args = []
     for a in specs_split_comma(newline[1:i].strip(), newitem, upper=True):
         args.append(a)
@@ -97,9 +99,9 @@ def parse_result(line, item = None):
         return None, line
     line = line[6:].lstrip()
     i = line.find(')')
-    assert i != -1,`line`
+    assert i != -1,repr(line)
     name = line[1:i].strip()
-    assert is_name(name),`name`
+    assert is_name(name),repr(name)
     return name, line[i+1:].lstrip()
 
 def filter_stmts(content, classes):
@@ -131,7 +133,7 @@ def get_module_files(directory, _cache={}):
         for name in module_line.findall(f.read()):
             name = name[1]
             if name in d:
-                print d[name],'already defines',name
+                print(d[name],'already defines',name)
                 continue
             d[name] = fn
     _cache[directory] = d
@@ -171,8 +173,8 @@ def module_in_file(name, filename):
 def str2stmt(string, isfree=True, isstrict=False):
     """ Convert Fortran code to Statement tree.
     """
-    from readfortran import Line, FortranStringReader
-    from parsefortran import FortranParser
+    from .readfortran import Line, FortranStringReader
+    from .parsefortran import FortranParser
     reader = FortranStringReader(string, isfree, isstrict)
     parser = FortranParser(reader)
     parser.parse()
@@ -202,13 +204,13 @@ def show_item_on_failure(func, _exception_depth=[0]):
     def new_func(self):
         try:
             func(self)
-        except AnalyzeError, msg:
+        except AnalyzeError as msg:
             clsname = self.__class__.__name__
             self.error('%s.analyze error: %s' % (clsname,msg))
             traceback.print_exc()
-        except ParseError, msg:
+        except ParseError as msg:
             self.error('parse error: %s' % (msg))
-        except Exception, msg:
+        except Exception as msg:
             _exception_depth[0] += 1
             if _exception_depth[0]==1:
                 self.error('exception triggered here: %s %s' % (Exception, msg))
@@ -228,7 +230,7 @@ class meta_classes(type):
             raise AttributeError('instance does not have attribute %r' % (name))
         return cls
 
-class classes(type):
+class classes(type, metaclass=meta_classes):
     """Make classes available as attributes of this class.
 
     To add a class to the attributes list, one must use::
@@ -241,8 +243,6 @@ class classes(type):
 
     * decorate analyze methods with show_item_on_failure
     """
-
-    __metaclass__ = meta_classes
 
     def __new__(metacls, name, bases, dict):
         if 'analyze' in dict:

@@ -23,18 +23,18 @@ def parse(cls, line, label='', isfree=True, isstrict=False):
         line = label + ' : ' + line
     reader = FortranStringReader(line)
     reader.set_mode(isfree, isstrict)
-    item = reader.next()
+    item = next(reader)
     if not cls.match(item.get_line()):
-        raise ValueError, '%r does not match %s pattern' % (line, cls.__name__)
+        raise ValueError('%r does not match %s pattern' % (line, cls.__name__))
     stmt = cls(item, item)
     if stmt.isvalid:
         r = str(stmt)
         if not isstrict:
             r1 = parse(cls, r, isstrict=True)
             if r != r1:
-                raise ValueError, 'Failed to parse %r with %s pattern in pyf mode, got %r' % (r, cls.__name__, r1)
+                raise ValueError('Failed to parse %r with %s pattern in pyf mode, got %r' % (r, cls.__name__, r1))
         return r
-    raise ValueError, 'parsing %r with %s pattern failed' % (line, cls.__name__)
+    raise ValueError('parsing %r with %s pattern failed' % (line, cls.__name__))
 
 def test_assignment():#self):
     assert_equal(parse(Assignment,'a=b'), 'a = b')
